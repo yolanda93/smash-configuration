@@ -16,6 +16,18 @@ oc_server = raw_input("OwnCloud test server:\n")
 ssl_enable = raw_input("Do you want to enable ssl (Y/N)?:\n" + '\033[0m')
 
 #
+# ##--------------## python configuration ##-------------------##
+#
+
+try:
+    import pip
+except ImportError:
+    print("Pip not present. Installing pip...")
+    os.system("wget https://bootstrap.pypa.io/get-pip.py")
+    os.system("python get-pip.py")
+    os.system("pip install wget")
+
+#
 # ##--------------## owncloud client installation and configuration ##-------------------##
 #
 
@@ -53,11 +65,11 @@ if client_choice == "1": # cernbox
         os.system("./tmp/cernbox-2.2.4.1495-signed.pkg")
 
         home = os.environ.get['HOME']
-        os.rename(home + "/Library/Application Support/cernbox.cfg", home + "/Library/Application Support/old-cernbox.cfg")
+        os.rename(home + "/Library/Application Support/CERNbox/cernbox.cfg", home + "/Library/Application Support/CERNbox/old-cernbox.cfg")
 
-        cfg_file = open(home + "/Library/Application Support/new-cernbox.cfg", "w")
+        cfg_file = open(home + "/Library/Application Support/CERNbox/new-cernbox.cfg", "w")
 
-        for line in open(home + "/Library/Application Support/old-cernbox.cfg"):
+        for line in open(home + "/Library/Application Support/CERNbox/old-cernbox.cfg"):
             if line[0:len("0\http_user")] == "0\http_user":
                 cfg_file.write("0\http_user=" + oc_account_name)
             elif line[0:len("0\url")] == "0\url":
@@ -125,13 +137,6 @@ else:
 f.write("oc_sync_cmd =" + path)
 
 f.close()
-
-try:
-    import pip
-except ImportError:
-    print("Pip not present. Installing pip...")
-    wget.download("https://bootstrap.pypa.io/get-pip.py")
-    os.system("python get-pip.py")
 
 os.system("pip install -r ./smashbox/requirements.txt")
 
