@@ -1,7 +1,7 @@
 #!/bin/bash
 from sys import platform
 import os
-import wget
+
 
 print("--------------------------------------------------------\n")
 print("------------ Smashbox\n")
@@ -10,10 +10,10 @@ print("--------------------------------------------------------\n")
 
 client_choice = raw_input('\033[1m' + "Please, choose the client to be tested: \n 0:OwnCloud Native Client \n 1:CERNbox Client \n \n "  + '\033[0m')
 
-oc_account_name = raw_input('\033[1m' + "Test account name:\n")
-oc_account_password = raw_input("Test account password:\n")
-oc_server = raw_input("OwnCloud test server:\n")
-ssl_enable = raw_input("Do you want to enable ssl (Y/N)?:\n" + '\033[0m')
+oc_account_name = raw_input('\033[1m' + "Test account name:\n" + '\033[0m')
+oc_account_password = raw_input('\033[1m' + "Test account password:\n" + '\033[0m')
+oc_server = raw_input('\033[1m' + "OwnCloud test server:\n" + '\033[0m')
+ssl_enable = raw_input('\033[1m' + "Do you want to enable ssl (Y/N)?:\n" + '\033[0m')
 
 #
 # ##--------------## python configuration ##-------------------##
@@ -26,6 +26,8 @@ except ImportError:
     os.system("wget https://bootstrap.pypa.io/get-pip.py")
     os.system("python get-pip.py")
     os.system("pip install wget")
+
+import wget
 
 #
 # ##--------------## owncloud client installation and configuration ##-------------------##
@@ -64,7 +66,7 @@ if client_choice == "1": # cernbox
         os.rename("./cernbox-2.2.4.1495-signed.pkg", "./tmp/cernbox-2.2.4.1495-signed.pkg")
         os.system("./tmp/cernbox-2.2.4.1495-signed.pkg")
 
-        home = os.environ.get['HOME']
+        home = os.environ['HOME']
         os.rename(home + "/Library/Application Support/CERNbox/cernbox.cfg", home + "/Library/Application Support/CERNbox/old-cernbox.cfg")
 
         cfg_file = open(home + "/Library/Application Support/CERNbox/new-cernbox.cfg", "w")
@@ -85,7 +87,7 @@ if client_choice == "1": # cernbox
         os.rename("./cernbox-2.2.4.830-setup.exe", "./tmp/cernbox-2.2.4.830-setup.exe")
         os.system("./tmp/cernbox-2.2.4.830-setup.exe")
 
-        home = os.environ.get['LOCALAPPDATA']
+        home = os.environ['LOCALAPPDATA']
 
 elif client_choice == "0": # Owncloud Native Client
         print '\033[94m' + "(1) Installing OwnCloud client" + '\033[0m'
