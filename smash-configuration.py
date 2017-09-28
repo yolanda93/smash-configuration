@@ -63,8 +63,8 @@ if client_choice == "1": # cernbox
      elif platform == "darwin": # MAC OS X
         print '\033[94m' + "(1) Installing cernbox client for MAC OSX" + '\033[0m'
         wget.download("https://cernbox.cern.ch/cernbox/doc/MacOSX/cernbox-2.2.4.1495-signed.pkg")
-        os.rename("./cernbox-2.2.4.1495-signed.pkg", "./tmp/cernbox-2.2.4.1495-signed.pkg")
-        os.system("./tmp/cernbox-2.2.4.1495-signed.pkg")
+        os.system("cp ./cernbox-2.2.4.1495-signed.pkg cd tm./tmp/cernbox-2.2.4.1495-signed.pkg")
+        os.system("installer -pkg ./tmp/cernbox-2.2.4.1495-signed.pkgg -target /")
 
         home = os.environ['HOME']
         os.rename(home + "/Library/Application Support/CERNbox/cernbox.cfg", home + "/Library/Application Support/CERNbox/old-cernbox.cfg")
