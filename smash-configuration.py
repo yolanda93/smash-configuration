@@ -158,7 +158,7 @@ if ((monit_choice == "Y") or (monit_choice == "y")):
     user = os.popen("echo $USER").read().split("\n")[0]
     my_cron = CronTab(user)
     current_path = os.path.dirname(os.path.abspath(__file__))
-    job = my_cron.new(command="python " + current_path + "/smash-run")
+    job = my_cron.new(command="python " + current_path + "/smash-run.py")
     job.day.every(1)
     job.setall('00 18 * * *')
     my_cron.write()
