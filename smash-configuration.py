@@ -144,7 +144,7 @@ os.system("pip install -r ./smashbox/requirements.txt")
 #
 print '\033[94m' + "(3) Running smashbox" + '\033[0m'
 
-monit_choice= raw_input('\033[1m' + "Do you want to set up this machine for regression testing with monitoring (Y/N)?:\n")
+monit_choice= raw_input('\033[1m' + "Do you want to set up this machine for regression testing with monitoring (Y/N)?:\n" + '\033[0m')
 
 if ((monit_choice == "Y") or (monit_choice == "y")):
 
@@ -157,12 +157,14 @@ if ((monit_choice == "Y") or (monit_choice == "y")):
 
     user = os.popen("echo $USER").read().split("\n")[0]
     my_cron = CronTab(user)
-    job = my_cron.new(command='python ./smash-configuration/smash-run')
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    job = my_cron.new(command="python " + current_path + "/smash-run")
     job.day.every(1)
+    job.setall('00 18 * * *')
     my_cron.write()
 
     print("Tests results will be written in: ./smashbox/etc/smashdir \n")
-    print("Results are sent also to the smashbox dashboard in monit kibana service: https://monit-kibana.cern.ch")
+    print("Results are also sent to the smashbox dashboard in monit kibana service: https://monit-kibana.cern.ch")
 
 else:
     print("Tests results will be written in: ./smashbox/etc/smashdir")

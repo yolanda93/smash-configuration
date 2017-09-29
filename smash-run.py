@@ -1,5 +1,7 @@
 import os
 import time
+import shutil
+
 # periodically check if smashbox is running
 
 threshold = 10000000000
@@ -11,5 +13,5 @@ if(result>threshold):
    # to do backup test results and update smashbox repository
 
 
-
-os.system("python ./smashbox/bin/smash --keep-going -a /smashbox/lib/")
+current_path = os.path.dirname(os.path.abspath(__file__))
+os.system("python " + current_path + "/smashbox/bin/smash --keep-going -a " + current_path + "/smashbox/lib/")
