@@ -103,7 +103,7 @@ elif client_choice == "0": # Owncloud Native Client
 ##--------------## smashbox installation ##-------------------##
 #
 
-print '\033[94m' + "(2) Installing Smashbox" + '\033[0m'
+print "\n" + '\033[94m' + "(2) Installing Smashbox" + '\033[0m'
 
 if not os.path.exists("./smashbox"):
     os.system("git clone https://github.com/yolanda93/smashbox.git")
@@ -155,7 +155,8 @@ if ((monit_choice == "Y") or (monit_choice == "y")):
         os.system("pip install python-crontab")
         from crontab import CronTab
 
-    my_cron = CronTab(user=os.popen("whoami").read())
+    user = os.popen("echo $USER").read().split("\n")[0]
+    my_cron = CronTab(user)
     job = my_cron.new(command='python ./smash-configuration/smash-run')
     job.day.every(1)
     my_cron.write()
