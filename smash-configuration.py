@@ -1,4 +1,3 @@
-#!/bin/bash
 from sys import platform
 import os
 
@@ -36,6 +35,18 @@ import wget
 if not os.path.exists("./tmp"):
      os.makedirs("./tmp")
 
+def change_cfg(path):
+    cfg_file = open(home + path + "/new-cernbox.cfg", "w")
+    for line in open(home + path + "/old-cernbox.cfg"):
+        if line[0:len("0\http_user")] == "0\http_user":
+            cfg_file.write("0\http_user=" + oc_account_name)
+        elif line[0:len("0\url")] == "0\url":
+            cfg_file.write("0\url=https://" + oc_server)
+        elif line[0:len("0\user")] == "0\user":
+            cfg_file.write("0\user=" + oc_account_name)
+        else:
+            cfg_file.write(line)
+
 if client_choice == "1": # cernbox
      if platform == "linux" or platform == "linux2": # linux
          print '\033[94m' + "(1) Installing cernbox client for linux" + '\033[0m'
@@ -47,39 +58,21 @@ if client_choice == "1": # cernbox
 
          home = os.environ['HOME']
          os.rename(home + "/.local/share/data/CERNbox/cernbox.cfg", home + "/.local/share/data/CERNbox/old-cernbox.cfg")
+         change_cfg("/.local/share/data/CERNbox")
 
-         cfg_file = open(home + "/.local/share/data/CERNbox/new-cernbox.cfg","w")
-
-         for line in open(home + "/.local/share/data/CERNbox/old-cernbox.cfg"):
-             if line[0:len("0\http_user")] == "0\http_user":
-                 cfg_file.write("0\http_user=" + oc_account_name)
-             elif line[0:len("0\url")] == "0\url":
-                 cfg_file.write("0\url=https://" + oc_server )
-             elif line[0:len("0\user")] == "0\user":
-                 cfg_file.write("0\user=" + oc_account_name)
-             else:
-                 cfg_file.write(line)
 
      elif platform == "darwin": # MAC OS X
         print '\033[94m' + "(1) Installing cernbox client for MAC OSX" + '\033[0m'
         wget.download("https://cernbox.cern.ch/cernbox/doc/MacOSX/cernbox-2.2.4.1495-signed.pkg")
-        os.system("cp ./cernbox-2.2.4.1495-signed.pkg cd tm./tmp/cernbox-2.2.4.1495-signed.pkg")
-        os.system("installer -pkg ./tmp/cernbox-2.2.4.1495-signed.pkgg -target /")
+        os.system("cp ./cernbox-2.2.4.1495-signed.pkg ./tmp/cernbox-2.2.4.1495-signed.pkg")
+        os.system("installer -pkg ./tmp/cernbox-2.2.4.1495-signed.pkg -target /")
+
 
         home = os.environ['HOME']
-        os.rename(home + "/Library/Application Support/CERNbox/cernbox.cfg", home + "/Library/Application Support/CERNbox/old-cernbox.cfg")
+        if os.path.exists("/Library/Application Support/CERNbox/cernbox.cfg"):
+            os.rename(home + "/Library/Application Support/CERNbox/cernbox.cfg", home + "/Library/Application Support/CERNbox/old-cernbox.cfg")
+            change_cfg("/Library/Application Support/CERNbox")
 
-        cfg_file = open(home + "/Library/Application Support/CERNbox/new-cernbox.cfg", "w")
-
-        for line in open(home + "/Library/Application Support/CERNbox/old-cernbox.cfg"):
-            if line[0:len("0\http_user")] == "0\http_user":
-                cfg_file.write("0\http_user=" + oc_account_name)
-            elif line[0:len("0\url")] == "0\url":
-                cfg_file.write("0\url=https://" + oc_server)
-            elif line[0:len("0\user")] == "0\user":
-                cfg_file.write("0\user=" + oc_account_name)
-            else:
-                cfg_file.write(line)
 
      elif platform == "Windows" : # Windows
         print '\033[94m' + "(1) Installing cernbox client for Windows" + '\033[0m'
@@ -129,12 +122,16 @@ if ((ssl_enable =="Y") | (ssl_enable =="y")):
 else:
     f.write('oc_ssl_enabled =' + "False" + '\n')
 
-if platform == "linux" or platform == "linux2" or platform == "darwin": # linux
+if platform == "linux" or platform == "linux2":  # linux
     if client_choice == "1": # cernbox
         location = os.popen("whereis cernboxcmd").read()
         path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd"
-else:
-    print "automatic location path to be implemented"
+elif platform == "darwin":
+        path = "/Applications/cernbox.app/Contents/MacOS/cernboxcmd"
+elif platform == "Windows":
+    if client_choice == "1": # cernbox
+        location = os.popen("where cernboxcmd").read()
+        path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd" # to be changed
 
 f.write("oc_sync_cmd =" + path)
 
@@ -159,7 +156,7 @@ if ((monit_choice == "Y") or (monit_choice == "y")):
         from crontab import CronTab
 
     my_cron = CronTab(user=os.popen("whoami").read())
-    job = my_cron.new(command='python ./smashbox/bin/smash --keep-going -a /smashbox/lib/')
+    job = my_cron.new(command='python ./smash-configuration/smash-run')
     job.day.every(1)
     my_cron.write()
 
