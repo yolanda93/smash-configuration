@@ -12,7 +12,6 @@ client_choice = raw_input('\033[1m' + "Please, choose the client to be tested: \
 oc_account_name = raw_input('\033[1m' + "Test account name:\n" + '\033[0m')
 oc_account_password = raw_input('\033[1m' + "Test account password:\n" + '\033[0m')
 oc_server = raw_input('\033[1m' + "OwnCloud test server:\n" + '\033[0m')
-ssl_enable = raw_input('\033[1m' + "Do you want to enable ssl (Y/N)?:\n" + '\033[0m')
 
 #
 # ##--------------## python configuration ##-------------------##
@@ -106,18 +105,18 @@ elif client_choice == "0": # Owncloud Native Client
 print "\n" + '\033[94m' + "(2) Installing Smashbox" + '\033[0m'
 
 if not os.path.exists("./smashbox"):
-    os.system("git clone https://github.com/yolanda93/smashbox.git")
+    os.system("git clone -b monitoring https://github.com/yolanda93/smashbox.git")
 
-os.system("cp ./auto-smashbox.conf ./smashbox/etc/auto-smashbox.conf")
+os.system("cp ./auto-smashbox.conf ./smashbox/etc/smashbox.conf")
 
-f = open('./smashbox/etc/auto-smashbox.conf', 'a')
+f = open('./smashbox/etc/smashbox.conf', 'a')
 
 f.write('oc_account_name =' + '"{}"'.format(oc_account_name) + '\n')
 f.write('oc_account_password =' + '"{}"'.format(oc_account_password) + '\n')
 f.write('oc_server =' + '"{}"'.format(oc_server) + '\n')
 
 
-if ((ssl_enable =="Y") | (ssl_enable =="y")):
+if oc_server=='cernbox.cern.ch/cernbox/desktop':
     f.write('oc_ssl_enabled =' + "True" + '\n')
 else:
     f.write('oc_ssl_enabled =' + "False" + '\n')
@@ -125,19 +124,26 @@ else:
 if platform == "linux" or platform == "linux2":  # linux
     if client_choice == "1": # cernbox
         location = os.popen("whereis cernboxcmd").read()
-        path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd"
+        path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd --trust"
 elif platform == "darwin":
-        path = "/Applications/cernbox.app/Contents/MacOS/cernboxcmd"
+        path = "/Applications/cernbox.app/Contents/MacOS/cernboxcmd --trust"
 elif platform == "Windows":
     if client_choice == "1": # cernbox
         location = os.popen("where cernboxcmd").read()
-        path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd" # to be changed
+        path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd --trust" # to be changed
 
 f.write("oc_sync_cmd =" + '"{}"'.format(path))
 
 f.close()
 
 os.system("pip install -r ./smashbox/requirements.txt")
+
+try:
+    import pycurl
+except ImportError:
+    print("Pycurl not present. Installing pycurl...")
+    os.system("python2.7 -m easy_install pycurl")
+
 
 #
 ##--------------## Running Smashbox ##-------------------##
