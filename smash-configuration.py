@@ -112,9 +112,9 @@ os.system("cp ./auto-smashbox.conf ./smashbox/etc/auto-smashbox.conf")
 
 f = open('./smashbox/etc/auto-smashbox.conf', 'a')
 
-f.write('oc_account_name =' + oc_account_name + '\n')
-f.write('oc_account_password =' + oc_account_password + '\n')
-f.write('oc_server =' + oc_server + '\n')
+f.write('oc_account_name =' + '"{}"'.format(oc_account_name) + '\n')
+f.write('oc_account_password =' + '"{}"'.format(oc_account_password) + '\n')
+f.write('oc_server =' + '"{}"'.format(oc_server) + '\n')
 
 
 if ((ssl_enable =="Y") | (ssl_enable =="y")):
@@ -133,7 +133,7 @@ elif platform == "Windows":
         location = os.popen("where cernboxcmd").read()
         path = "/" + location.split("cernboxcmd")[1].split(": /")[1] + "cernboxcmd" # to be changed
 
-f.write("oc_sync_cmd =" + path)
+f.write("oc_sync_cmd =" + '"{}"'.format(path))
 
 f.close()
 
