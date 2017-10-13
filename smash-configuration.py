@@ -1,16 +1,46 @@
 from sys import platform
 import os
+import getpass
+import pwd
+
+# Windows, MacOsx, Linux
+oc_native_client_versions = {
+    "2.3.3": ["8250","8242","8338"],
+    "2.3.2": ["6928","4250",],
+    "2.3.1": ["6824","4139",],
+    "2.3.0": ["6780","4097",],
+    "2.2.4": ["6408","3709",],
+    "2.2.3": ["6307","3601",],
+}
 
 
-print("--------------------------------------------------------\n")
-print("------------ Smashbox\n")
-print("------------ This is a framework for end-to-end testing the core storage functionality of owncloud-based services.\n")
-print("--------------------------------------------------------\n")
+cernbox_client_versions = {
+    "2.3.3": ["centos7-cernbox-future.repo",""],
+    "2.2.4": ["centos7-cernbox.repo",""],
+    "2.1.1": ["centos7-cernbox.repo",""],
+    "2.2.2": ["centos7-cernbox.repo",""],
+    "1.6.4": ["centos7-cernbox.repo",""],
+    "1.7.0": ["centos7-cernbox.repo",""],
+    "1.7.1": ["centos7-cernbox.repo",""],
+    "1.7.2": ["centos7-cernbox.repo",""],
+    "1.8.3": ["centos7-cernbox.repo",""],
+}
+
+print("--------------------------------------------------------")
+print("------------ Smashbox")
+print("------------ This is a framework for end-to-end testing the core storage functionality of owncloud-based services.")
+print("--------------------------------------------------------")
+
 
 client_choice = raw_input('\033[1m' + "Please, choose the client to be tested: \n 0:OwnCloud Native Client \n 1:CERNbox Client \n \n "  + '\033[0m')
+if client_choice == 0:
+   version_choice = raw_input('\033[1m' + "Please, choose the version of client: \n Available client versions are: 2.2.3, 2.3.2, 2.3.1, 2.3.0,2.2.4,2.2.3 \n"  + '\033[0m')
+else:
+    version_choice = raw_input('\033[1m' + "Please, choose the version of client: \n" + '\033[0m')
 
-oc_account_name = raw_input('\033[1m' + "Test account name:\n" + '\033[0m')
-oc_account_password = raw_input('\033[1m' + "Test account password:\n" + '\033[0m')
+print('\033[1m' + "Provide a test account:" + '\033[0m')
+oc_account_name = raw_input('username:')
+oc_account_password = getpass.getpass()
 oc_server = raw_input('\033[1m' + "OwnCloud test server:\n" + '\033[0m')
 
 #
@@ -55,8 +85,11 @@ if client_choice == "1": # cernbox
          os.system("yum update")
          os.system("yum install cernbox-client")
 
-         home = os.environ['HOME']
-         os.rename(home + "/.local/share/data/CERNbox/cernbox.cfg", home + "/.local/share/data/CERNbox/old-cernbox.cfg")
+         #current_path = os.path.dirname(os.path.abspath(__file__)).split("/")
+         #home = "/"  + current_path[1] + "/" + current_path[2]
+         #print("sdfsdf" + home)
+         home = os.path.expanduser('~user')
+         os.rename(home + "/.local/share/data/CERNBox/cernbox.cfg", home + "/.local/share/data/CERNbox/old-cernbox.cfg")
          change_cfg("/.local/share/data/CERNbox")
 
 
@@ -173,4 +206,6 @@ if ((monit_choice == "Y") or (monit_choice == "y")):
 
 else:
     print("Tests results will be written in: ./smashbox/etc/smashdir")
+
+    # write in smashbox config activty
 
